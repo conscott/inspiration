@@ -22,7 +22,7 @@ def hello():
         video = requests.get(url)
         html = BeautifulSoup(video.text, "html.parser")
         title = html.title.text.split('-')[0].strip()
-        comments = html.findAll('div', attrs={'class': 'commentMessage'})
+        comments = html.findAll('div', attrs={'class': 'commentMessage'})[:-1]
         if comments:
             comment = random.choice(comments).span.text
             break
