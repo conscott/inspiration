@@ -14,16 +14,21 @@ def hello():
     links = [l for l in r.text.split('\n') if 'view_video.php' in l]
     matches = [re.search('a href="(.*)" title="', l) for l in links]
     titles = [m.group(1) for m in matches if m]
-    pick = random.choice(titles)
 
-    # follow link to video and grab first comment
-    url = PH + pick
-    video = requests.get(url)
-    html = BeautifulSoup(video.text, "html.parser")
-    title = html.title.text
-    comment = html.find('div', attrs={'class': 'commentMessage'}).span.text
+    # Find pornhub video with comments
+    while True:
+        pick = random.choice(titles)
+        url = PH + pick
+        video = requests.get(url)
+        html = BeautifulSoup(video.text, "html.parser")
+        title = html.title.text.split('-')[0].strip()
+        comments = html.findAll('div', attrs={'class': 'commentMessage'})
+        if comments:
+            comment = random.choice(comments).span.text
+            break
+
     return render_template('home.html', url=url, title=title, comment=comment)
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="127.0.0.1")
